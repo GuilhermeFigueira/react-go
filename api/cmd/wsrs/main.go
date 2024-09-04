@@ -8,29 +8,29 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/GuilhermeFigueira/react-go/internal/api"
-	"github.com/GuilhermeFigueira/react-go/internal/store/pgstore/pgstore"
+	"github.com/rocketseat-education/semana-tech-go-react-server/internal/api"
+	"github.com/rocketseat-education/semana-tech-go-react-server/internal/store/pgstore"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		panic (err)
+		panic(err)
 	}
 
 	ctx := context.Background()
 
 	pool, err := pgxpool.New(ctx, fmt.Sprintf(
 		"user=%s password=%s host=%s port=%s dbname=%s",
-		os.Getenv("WSRS_DATABASE_USER"), 
-		os.Getenv("WSRS_DATABASE_PASSWORD"), 
-		os.Getenv("WSRS_DATABASE_HOST"), 
-		os.Getenv("WSRS_DATABASE_PORT"), 
-		os.Getenv("WSRS_DATABASE_NAME"), 
+		os.Getenv("WSRS_DATABASE_USER"),
+		os.Getenv("WSRS_DATABASE_PASSWORD"),
+		os.Getenv("WSRS_DATABASE_HOST"),
+		os.Getenv("WSRS_DATABASE_PORT"),
+		os.Getenv("WSRS_DATABASE_NAME"),
 	))
-
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 
@@ -42,15 +42,15 @@ func main() {
 
 	handler := api.NewHandler(pgstore.New(pool))
 
-	go func(){
+	go func() {
 		if err := http.ListenAndServe(":8080", handler); err != nil {
-			if !errors.Is(err, http.ErrServerClosed){
+			if !errors.Is(err, http.ErrServerClosed) {
 				panic(err)
 			}
 		}
 	}()
 
-	quit := make(chan os.Signal, 1 )
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 }

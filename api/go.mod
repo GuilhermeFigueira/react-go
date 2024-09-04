@@ -1,6 +1,6 @@
-module github.com/GuilhermeFigueira/react-go
+module github.com/rocketseat-education/semana-tech-go-react-server
 
-go 1.22.6
+go 1.22.4
 
 require (
 	github.com/go-chi/chi/v5 v5.1.0
